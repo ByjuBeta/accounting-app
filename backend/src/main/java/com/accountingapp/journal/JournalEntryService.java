@@ -10,6 +10,8 @@ import com.accountingapp.common.exception.ResourceNotFoundException;
 import com.accountingapp.journal.dto.CreateJournalEntryRequest;
 import com.accountingapp.journal.dto.JournalEntryLineRequest;
 import com.accountingapp.journal.dto.UpdateJournalEntryRequest;
+import com.accountingapp.organization.Organization;
+import com.accountingapp.organization.OrganizationRepository;
 import jakarta.persistence.EntityManager;
 import java.math.BigDecimal;
 import java.time.Instant;
@@ -33,6 +35,7 @@ public class JournalEntryService {
 
     private final JournalEntryRepository journalEntryRepository;
     private final AccountRepository accountRepository;
+    private final OrganizationRepository organizationRepository;
     private final AuditLogService auditLogService;
     private final EntityManager entityManager;
 
@@ -43,6 +46,8 @@ public class JournalEntryService {
     @Transactional
     public JournalEntry create(CreateJournalEntryRequest request) {
         UUID organizationId = OrganizationContext.getRequired();
+        Organization organization = organizationRepository.findById(organizationId)
+                .orElseThrow(() -> new ResourceNotFoundException("Organization", organizationId));
         JournalEntry entry = JournalEntry.builder()
                 .entryNumber(nextEntryNumber())
                 .entryDate(request.entryDate())
@@ -50,10 +55,9 @@ public class JournalEntryService {
                 .status(TransactionStatus.DRAFT)
                 .memo(request.memo())
                 .referenceNumber(request.referenceNumber())
-                .currencyCode(request.currencyCode())
+                .currencyCode(request.currencyCode() != null ? request.currencyCode() : organization.getBaseCurrencyCode())
                 .build();
-        entry.setOrganization(entityManager.getReference(
-                com.accountingapp.organization.Organization.class, organizationId));
+        entry.setOrganization(organization);
 
         applyLines(entry, request.lines(), organizationId);
         validateBalanced(entry);

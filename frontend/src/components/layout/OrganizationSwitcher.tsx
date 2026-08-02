@@ -27,7 +27,11 @@ export function OrganizationSwitcher() {
   })
 
   useEffect(() => {
-    if (!organizations || organizations.length === 0) return
+    if (!organizations) return
+    if (organizations.length === 0) {
+      if (currentOrganizationId) setCurrentOrganizationId(null)
+      return
+    }
     const stillExists = organizations.some((o) => o.id === currentOrganizationId)
     if (!stillExists) {
       setCurrentOrganizationId(organizations[0]!.id)
