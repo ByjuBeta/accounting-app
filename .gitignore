@@ -1,0 +1,29 @@
+# Backend (Maven)
+backend/target/
+*.class
+*.jar
+!.mvn/wrapper/maven-wrapper.jar
+
+# Frontend (Node)
+frontend/node_modules/
+frontend/dist/
+frontend/.vite/
+frontend/coverage/
+
+# IDE
+.idea/
+*.iml
+.vscode/
+.DS_Store
+
+# Env
+.env
+.env.local
+*.env
+
+# Logs
+*.log
+
+# Claude Code local session state (launch.json is intentionally tracked)
+.claude/settings.local.json
+.claude/scheduled_tasks.lock

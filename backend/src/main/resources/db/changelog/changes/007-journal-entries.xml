@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+        https://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd">
+
+    <changeSet id="007-journal-entries" author="accounting-app">
+        <createTable tableName="journal_entries">
+            <column name="id" type="UUID">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="version" type="BIGINT" defaultValueNumeric="0">
+                <constraints nullable="false"/>
+            </column>
+            <column name="created_at" type="TIMESTAMP WITH TIME ZONE">
+                <constraints nullable="false"/>
+            </column>
+            <column name="updated_at" type="TIMESTAMP WITH TIME ZONE">
+                <constraints nullable="false"/>
+            </column>
+            <column name="created_by" type="UUID"/>
+            <column name="updated_by" type="UUID"/>
+            <column name="organization_id" type="UUID">
+                <constraints nullable="false" foreignKeyName="fk_journal_entries_organization"
+                             references="organizations(id)"/>
+            </column>
+            <column name="entry_number" type="VARCHAR(32)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="entry_date" type="DATE">
+                <constraints nullable="false"/>
+            </column>
+            <column name="transaction_type" type="VARCHAR(32)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="status" type="VARCHAR(16)" defaultValue="DRAFT">
+                <constraints nullable="false"/>
+            </column>
+            <column name="memo" type="VARCHAR(2000)"/>
+            <column name="reference_number" type="VARCHAR(64)"/>
+            <column name="currency_code" type="VARCHAR(3)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="posted_at" type="TIMESTAMP WITH TIME ZONE"/>
+            <column name="reversal_of_id" type="UUID">
+                <constraints foreignKeyName="fk_journal_entries_reversal_of" references="journal_entries(id)"/>
+            </column>
+            <column name="voided_at" type="TIMESTAMP WITH TIME ZONE"/>
+            <column name="void_reason" type="VARCHAR(1000)"/>
+            <column name="source_type" type="VARCHAR(32)"/>
+            <column name="source_id" type="UUID"/>
+        </createTable>
+
+        <addUniqueConstraint tableName="journal_entries" columnNames="organization_id, entry_number"
+                              constraintName="uq_journal_entries_org_number"/>
+        <createIndex indexName="idx_journal_entries_org_date" tableName="journal_entries">
+            <column name="organization_id"/>
+            <column name="entry_date" descending="true"/>
+        </createIndex>
+        <createIndex indexName="idx_journal_entries_status" tableName="journal_entries">
+            <column name="organization_id"/>
+            <column name="status"/>
+        </createIndex>
+        <createIndex indexName="idx_journal_entries_source" tableName="journal_entries">
+            <column name="source_type"/>
+            <column name="source_id"/>
+        </createIndex>
+    </changeSet>
+
+</databaseChangeLog>

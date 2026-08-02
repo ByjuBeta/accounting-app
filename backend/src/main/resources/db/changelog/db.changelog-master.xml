@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+        https://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd">
+
+    <include file="db/changelog/changes/001-organizations.xml" relativeToChangelogFile="false"/>
+    <include file="db/changelog/changes/002-users.xml" relativeToChangelogFile="false"/>
+    <include file="db/changelog/changes/003-organization-members.xml" relativeToChangelogFile="false"/>
+    <include file="db/changelog/changes/004-audit-logs.xml" relativeToChangelogFile="false"/>
+    <include file="db/changelog/changes/005-accounts.xml" relativeToChangelogFile="false"/>
+    <include file="db/changelog/changes/006-journal-entry-number-seq.xml" relativeToChangelogFile="false"/>
+    <include file="db/changelog/changes/007-journal-entries.xml" relativeToChangelogFile="false"/>
+    <include file="db/changelog/changes/008-journal-entry-lines.xml" relativeToChangelogFile="false"/>
+    <include file="db/changelog/changes/009-journal-balance-trigger.xml" relativeToChangelogFile="false"/>
+    <include file="db/changelog/changes/010-customers.xml" relativeToChangelogFile="false"/>
+    <include file="db/changelog/changes/011-ar-number-sequences.xml" relativeToChangelogFile="false"/>
+    <include file="db/changelog/changes/012-invoices.xml" relativeToChangelogFile="false"/>
+    <include file="db/changelog/changes/013-payments.xml" relativeToChangelogFile="false"/>
+    <include file="db/changelog/changes/014-vendors.xml" relativeToChangelogFile="false"/>
+    <include file="db/changelog/changes/015-ap-number-sequences.xml" relativeToChangelogFile="false"/>
+    <include file="db/changelog/changes/016-bills.xml" relativeToChangelogFile="false"/>
+    <include file="db/changelog/changes/017-bill-payments.xml" relativeToChangelogFile="false"/>
+    <include file="db/changelog/changes/018-banking.xml" relativeToChangelogFile="false"/>
+    <include file="db/changelog/changes/019-refresh-tokens.xml" relativeToChangelogFile="false"/>
+
+</databaseChangeLog>

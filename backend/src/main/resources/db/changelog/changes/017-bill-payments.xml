@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+        https://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd">
+
+    <changeSet id="017-bill-payments" author="accounting-app">
+        <createTable tableName="bill_payments">
+            <column name="id" type="UUID">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="version" type="BIGINT" defaultValueNumeric="0">
+                <constraints nullable="false"/>
+            </column>
+            <column name="created_at" type="TIMESTAMP WITH TIME ZONE">
+                <constraints nullable="false"/>
+            </column>
+            <column name="updated_at" type="TIMESTAMP WITH TIME ZONE">
+                <constraints nullable="false"/>
+            </column>
+            <column name="created_by" type="UUID"/>
+            <column name="updated_by" type="UUID"/>
+            <column name="organization_id" type="UUID">
+                <constraints nullable="false" foreignKeyName="fk_bill_payments_organization"
+                             references="organizations(id)"/>
+            </column>
+            <column name="payment_number" type="VARCHAR(32)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="vendor_id" type="UUID">
+                <constraints nullable="false" foreignKeyName="fk_bill_payments_vendor" references="vendors(id)"/>
+            </column>
+            <column name="payment_date" type="DATE">
+                <constraints nullable="false"/>
+            </column>
+            <column name="amount" type="DECIMAL(19,2)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="paid_from_account_id" type="UUID">
+                <constraints nullable="false" foreignKeyName="fk_bill_payments_paid_from_account"
+                             references="accounts(id)"/>
+            </column>
+            <column name="memo" type="VARCHAR(1000)"/>
+            <column name="reference_number" type="VARCHAR(64)"/>
+        </createTable>
+        <addUniqueConstraint tableName="bill_payments" columnNames="organization_id, payment_number"
+                              constraintName="uq_bill_payments_org_number"/>
+        <createIndex indexName="idx_bill_payments_vendor" tableName="bill_payments">
+            <column name="vendor_id"/>
+        </createIndex>
+
+        <createTable tableName="bill_payment_applications">
+            <column name="id" type="UUID">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="version" type="BIGINT" defaultValueNumeric="0">
+                <constraints nullable="false"/>
+            </column>
+            <column name="created_at" type="TIMESTAMP WITH TIME ZONE">
+                <constraints nullable="false"/>
+            </column>
+            <column name="updated_at" type="TIMESTAMP WITH TIME ZONE">
+                <constraints nullable="false"/>
+            </column>
+            <column name="created_by" type="UUID"/>
+            <column name="updated_by" type="UUID"/>
+            <column name="bill_payment_id" type="UUID">
+                <constraints nullable="false" foreignKeyName="fk_bill_payment_applications_payment"
+                             references="bill_payments(id)" deleteCascade="true"/>
+            </column>
+            <column name="bill_id" type="UUID">
+                <constraints nullable="false" foreignKeyName="fk_bill_payment_applications_bill"
+                             references="bills(id)"/>
+            </column>
+            <column name="amount_applied" type="DECIMAL(19,2)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="discount_taken" type="DECIMAL(19,2)" defaultValueNumeric="0">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+        <createIndex indexName="idx_bill_payment_applications_payment" tableName="bill_payment_applications">
+            <column name="bill_payment_id"/>
+        </createIndex>
+        <createIndex indexName="idx_bill_payment_applications_bill" tableName="bill_payment_applications">
+            <column name="bill_id"/>
+        </createIndex>
+    </changeSet>
+
+</databaseChangeLog>
