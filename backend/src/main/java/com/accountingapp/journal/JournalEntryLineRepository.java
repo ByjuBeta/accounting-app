@@ -26,6 +26,22 @@ public interface JournalEntryLineRepository extends JpaRepository<JournalEntryLi
     boolean existsByAccountId(UUID accountId);
 
     @Query("""
+            select l from JournalEntryLine l
+            where l.account.id = :accountId
+              and l.reconciled = false
+              and l.journalEntry.status in :statuses
+              and l.journalEntry.entryDate between :fromDate and :toDate
+              and (l.debitAmount - l.creditAmount) = :signedAmount
+            order by l.journalEntry.entryDate asc
+            """)
+    List<JournalEntryLine> findUnreconciledCandidates(
+            @Param("accountId") UUID accountId,
+            @Param("signedAmount") java.math.BigDecimal signedAmount,
+            @Param("fromDate") java.time.LocalDate fromDate,
+            @Param("toDate") java.time.LocalDate toDate,
+            @Param("statuses") Collection<TransactionStatus> statuses);
+
+    @Query("""
             select coalesce(sum(l.debitAmount), 0) as totalDebit, coalesce(sum(l.creditAmount), 0) as totalCredit
             from JournalEntryLine l
             where l.account.id = :accountId

@@ -1,0 +1,129 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+        https://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd">
+
+    <changeSet id="018-bank-account-details" author="accounting-app">
+        <createTable tableName="bank_account_details">
+            <column name="id" type="UUID">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="version" type="BIGINT" defaultValueNumeric="0">
+                <constraints nullable="false"/>
+            </column>
+            <column name="created_at" type="TIMESTAMP WITH TIME ZONE">
+                <constraints nullable="false"/>
+            </column>
+            <column name="updated_at" type="TIMESTAMP WITH TIME ZONE">
+                <constraints nullable="false"/>
+            </column>
+            <column name="created_by" type="UUID"/>
+            <column name="updated_by" type="UUID"/>
+            <column name="account_id" type="UUID">
+                <constraints nullable="false" unique="true" foreignKeyName="fk_bank_account_details_account"
+                             references="accounts(id)"/>
+            </column>
+            <column name="bank_name" type="VARCHAR(255)"/>
+            <column name="routing_number_last4" type="VARCHAR(4)"/>
+            <column name="account_number_last4" type="VARCHAR(4)"/>
+            <column name="notes" type="VARCHAR(1000)"/>
+        </createTable>
+    </changeSet>
+
+    <changeSet id="019-bank-transactions" author="accounting-app">
+        <createTable tableName="bank_transactions">
+            <column name="id" type="UUID">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="version" type="BIGINT" defaultValueNumeric="0">
+                <constraints nullable="false"/>
+            </column>
+            <column name="created_at" type="TIMESTAMP WITH TIME ZONE">
+                <constraints nullable="false"/>
+            </column>
+            <column name="updated_at" type="TIMESTAMP WITH TIME ZONE">
+                <constraints nullable="false"/>
+            </column>
+            <column name="created_by" type="UUID"/>
+            <column name="updated_by" type="UUID"/>
+            <column name="organization_id" type="UUID">
+                <constraints nullable="false" foreignKeyName="fk_bank_transactions_organization"
+                             references="organizations(id)"/>
+            </column>
+            <column name="account_id" type="UUID">
+                <constraints nullable="false" foreignKeyName="fk_bank_transactions_account" references="accounts(id)"/>
+            </column>
+            <column name="transaction_date" type="DATE">
+                <constraints nullable="false"/>
+            </column>
+            <column name="amount" type="DECIMAL(19,2)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="description" type="VARCHAR(500)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="check_number" type="VARCHAR(32)"/>
+            <column name="external_id" type="VARCHAR(128)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="status" type="VARCHAR(16)" defaultValue="UNMATCHED">
+                <constraints nullable="false"/>
+            </column>
+            <column name="matched_journal_entry_line_id" type="UUID">
+                <constraints foreignKeyName="fk_bank_transactions_matched_line" references="journal_entry_lines(id)"/>
+            </column>
+        </createTable>
+        <addUniqueConstraint tableName="bank_transactions" columnNames="account_id, external_id"
+                              constraintName="uq_bank_transactions_account_external_id"/>
+        <createIndex indexName="idx_bank_transactions_account_status" tableName="bank_transactions">
+            <column name="account_id"/>
+            <column name="status"/>
+        </createIndex>
+    </changeSet>
+
+    <changeSet id="020-reconciliations" author="accounting-app">
+        <createTable tableName="reconciliations">
+            <column name="id" type="UUID">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="version" type="BIGINT" defaultValueNumeric="0">
+                <constraints nullable="false"/>
+            </column>
+            <column name="created_at" type="TIMESTAMP WITH TIME ZONE">
+                <constraints nullable="false"/>
+            </column>
+            <column name="updated_at" type="TIMESTAMP WITH TIME ZONE">
+                <constraints nullable="false"/>
+            </column>
+            <column name="created_by" type="UUID"/>
+            <column name="updated_by" type="UUID"/>
+            <column name="organization_id" type="UUID">
+                <constraints nullable="false" foreignKeyName="fk_reconciliations_organization"
+                             references="organizations(id)"/>
+            </column>
+            <column name="account_id" type="UUID">
+                <constraints nullable="false" foreignKeyName="fk_reconciliations_account" references="accounts(id)"/>
+            </column>
+            <column name="statement_date" type="DATE">
+                <constraints nullable="false"/>
+            </column>
+            <column name="beginning_balance" type="DECIMAL(19,2)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="statement_ending_balance" type="DECIMAL(19,2)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="cleared_balance" type="DECIMAL(19,2)"/>
+            <column name="status" type="VARCHAR(16)" defaultValue="IN_PROGRESS">
+                <constraints nullable="false"/>
+            </column>
+            <column name="completed_at" type="TIMESTAMP WITH TIME ZONE"/>
+        </createTable>
+        <createIndex indexName="idx_reconciliations_account" tableName="reconciliations">
+            <column name="account_id"/>
+        </createIndex>
+    </changeSet>
+
+</databaseChangeLog>
