@@ -23,3 +23,7 @@ frontend/coverage/
 
 # Logs
 *.log
+
+# Claude Code local session state (launch.json is intentionally tracked)
+.claude/settings.local.json
+.claude/scheduled_tasks.lock
