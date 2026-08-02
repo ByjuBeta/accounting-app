@@ -179,14 +179,25 @@ public class AccountService {
     }
 
     private Account getOrCreateOpeningBalanceEquityAccount() {
+        return getOrCreateSystemAccount(OPENING_BALANCE_EQUITY_CODE, "Opening Balance Equity", AccountType.EQUITY);
+    }
+
+    /**
+     * Finds or lazily creates a well-known account (e.g. Accounts Receivable,
+     * Sales Tax Payable) that other modules post to automatically. Shared
+     * across A/R, A/P, and banking so each doesn't reimplement the same
+     * find-or-create dance.
+     */
+    @Transactional
+    public Account getOrCreateSystemAccount(String code, String name, AccountType accountType) {
         UUID organizationId = OrganizationContext.getRequired();
-        return accountRepository.findByOrganizationIdAndCodeIgnoreCase(organizationId, OPENING_BALANCE_EQUITY_CODE)
+        return accountRepository.findByOrganizationIdAndCodeIgnoreCase(organizationId, code)
                 .orElseGet(() -> {
                     Organization organization = entityManager.getReference(Organization.class, organizationId);
                     Account account = Account.builder()
-                            .code(OPENING_BALANCE_EQUITY_CODE)
-                            .name("Opening Balance Equity")
-                            .accountType(AccountType.EQUITY)
+                            .code(code)
+                            .name(name)
+                            .accountType(accountType)
                             .currencyCode(organizationRepository.findById(organizationId)
                                     .map(Organization::getBaseCurrencyCode).orElse("USD"))
                             .status(AccountStatus.ACTIVE)

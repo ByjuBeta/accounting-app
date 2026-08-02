@@ -14,5 +14,9 @@
     <include file="db/changelog/changes/007-journal-entries.xml" relativeToChangelogFile="false"/>
     <include file="db/changelog/changes/008-journal-entry-lines.xml" relativeToChangelogFile="false"/>
     <include file="db/changelog/changes/009-journal-balance-trigger.xml" relativeToChangelogFile="false"/>
+    <include file="db/changelog/changes/010-customers.xml" relativeToChangelogFile="false"/>
+    <include file="db/changelog/changes/011-ar-number-sequences.xml" relativeToChangelogFile="false"/>
+    <include file="db/changelog/changes/012-invoices.xml" relativeToChangelogFile="false"/>
+    <include file="db/changelog/changes/013-payments.xml" relativeToChangelogFile="false"/>
 
 </databaseChangeLog>

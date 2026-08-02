@@ -17,4 +17,7 @@ public interface JournalEntryRepository extends JpaRepository<JournalEntry, UUID
 
     @Query("select count(e) from JournalEntry e where e.organization.id = :organizationId")
     long countByOrganizationId(@Param("organizationId") UUID organizationId);
+
+    Optional<JournalEntry> findBySourceTypeAndSourceIdAndOrganizationId(
+            String sourceType, UUID sourceId, UUID organizationId);
 }

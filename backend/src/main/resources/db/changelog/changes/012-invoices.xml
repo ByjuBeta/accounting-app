@@ -1,0 +1,114 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+        https://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd">
+
+    <changeSet id="012-invoices" author="accounting-app">
+        <createTable tableName="invoices">
+            <column name="id" type="UUID">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="version" type="BIGINT" defaultValueNumeric="0">
+                <constraints nullable="false"/>
+            </column>
+            <column name="created_at" type="TIMESTAMP WITH TIME ZONE">
+                <constraints nullable="false"/>
+            </column>
+            <column name="updated_at" type="TIMESTAMP WITH TIME ZONE">
+                <constraints nullable="false"/>
+            </column>
+            <column name="created_by" type="UUID"/>
+            <column name="updated_by" type="UUID"/>
+            <column name="organization_id" type="UUID">
+                <constraints nullable="false" foreignKeyName="fk_invoices_organization"
+                             references="organizations(id)"/>
+            </column>
+            <column name="invoice_number" type="VARCHAR(32)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="customer_id" type="UUID">
+                <constraints nullable="false" foreignKeyName="fk_invoices_customer" references="customers(id)"/>
+            </column>
+            <column name="invoice_date" type="DATE">
+                <constraints nullable="false"/>
+            </column>
+            <column name="due_date" type="DATE">
+                <constraints nullable="false"/>
+            </column>
+            <column name="status" type="VARCHAR(16)" defaultValue="DRAFT">
+                <constraints nullable="false"/>
+            </column>
+            <column name="memo" type="VARCHAR(2000)"/>
+            <column name="currency_code" type="VARCHAR(3)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="subtotal" type="DECIMAL(19,2)" defaultValueNumeric="0">
+                <constraints nullable="false"/>
+            </column>
+            <column name="tax_total" type="DECIMAL(19,2)" defaultValueNumeric="0">
+                <constraints nullable="false"/>
+            </column>
+            <column name="total" type="DECIMAL(19,2)" defaultValueNumeric="0">
+                <constraints nullable="false"/>
+            </column>
+            <column name="amount_paid" type="DECIMAL(19,2)" defaultValueNumeric="0">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+        <addUniqueConstraint tableName="invoices" columnNames="organization_id, invoice_number"
+                              constraintName="uq_invoices_org_number"/>
+        <createIndex indexName="idx_invoices_org_status" tableName="invoices">
+            <column name="organization_id"/>
+            <column name="status"/>
+        </createIndex>
+        <createIndex indexName="idx_invoices_customer" tableName="invoices">
+            <column name="customer_id"/>
+        </createIndex>
+
+        <createTable tableName="invoice_lines">
+            <column name="id" type="UUID">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="version" type="BIGINT" defaultValueNumeric="0">
+                <constraints nullable="false"/>
+            </column>
+            <column name="created_at" type="TIMESTAMP WITH TIME ZONE">
+                <constraints nullable="false"/>
+            </column>
+            <column name="updated_at" type="TIMESTAMP WITH TIME ZONE">
+                <constraints nullable="false"/>
+            </column>
+            <column name="created_by" type="UUID"/>
+            <column name="updated_by" type="UUID"/>
+            <column name="invoice_id" type="UUID">
+                <constraints nullable="false" foreignKeyName="fk_invoice_lines_invoice"
+                             references="invoices(id)" deleteCascade="true"/>
+            </column>
+            <column name="line_number" type="INT">
+                <constraints nullable="false"/>
+            </column>
+            <column name="description" type="VARCHAR(500)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="quantity" type="DECIMAL(19,4)" defaultValueNumeric="1">
+                <constraints nullable="false"/>
+            </column>
+            <column name="unit_price" type="DECIMAL(19,2)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="tax_rate" type="DECIMAL(5,2)" defaultValueNumeric="0">
+                <constraints nullable="false"/>
+            </column>
+            <column name="income_account_id" type="UUID">
+                <constraints nullable="false" foreignKeyName="fk_invoice_lines_income_account"
+                             references="accounts(id)"/>
+            </column>
+        </createTable>
+        <createIndex indexName="idx_invoice_lines_invoice" tableName="invoice_lines">
+            <column name="invoice_id"/>
+        </createIndex>
+    </changeSet>
+
+</databaseChangeLog>
