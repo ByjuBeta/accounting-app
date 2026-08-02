@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+        https://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd">
+
+    <!--
+      Double-entry integrity, enforced at the database level: whatever the
+      application does (or fails to do), a transaction can never commit with
+      an unbalanced journal entry. Deferred to commit time so a multi-line
+      entry can be inserted line-by-line within one transaction.
+    -->
+    <changeSet id="009-journal-balance-trigger" author="accounting-app">
+        <sql splitStatements="false">
+            CREATE OR REPLACE FUNCTION journal_entry_lines_balance_check() RETURNS trigger AS $$
+            DECLARE
+                v_entry_id UUID;
+                v_diff NUMERIC;
+            BEGIN
+                v_entry_id := COALESCE(NEW.journal_entry_id, OLD.journal_entry_id);
+
+                SELECT COALESCE(SUM(debit_amount), 0) - COALESCE(SUM(credit_amount), 0)
+                INTO v_diff
+                FROM journal_entry_lines
+                WHERE journal_entry_id = v_entry_id;
+
+                IF v_diff &lt;&gt; 0 THEN
+                    RAISE EXCEPTION 'Journal entry % is not balanced (debit/credit difference = %)', v_entry_id, v_diff
+                        USING ERRCODE = '23514';
+                END IF;
+
+                RETURN NULL;
+            END;
+            $$ LANGUAGE plpgsql;
+
+            CREATE CONSTRAINT TRIGGER trg_journal_entry_lines_balance
+                AFTER INSERT OR UPDATE OR DELETE ON journal_entry_lines
+                DEFERRABLE INITIALLY DEFERRED
+                FOR EACH ROW EXECUTE FUNCTION journal_entry_lines_balance_check();
+        </sql>
+        <rollback>
+            DROP TRIGGER IF EXISTS trg_journal_entry_lines_balance ON journal_entry_lines;
+            DROP FUNCTION IF EXISTS journal_entry_lines_balance_check();
+        </rollback>
+    </changeSet>
+
+</databaseChangeLog>

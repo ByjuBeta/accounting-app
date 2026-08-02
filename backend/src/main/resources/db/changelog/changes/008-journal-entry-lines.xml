@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+        https://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd">
+
+    <changeSet id="008-journal-entry-lines" author="accounting-app">
+        <createTable tableName="journal_entry_lines">
+            <column name="id" type="UUID">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="version" type="BIGINT" defaultValueNumeric="0">
+                <constraints nullable="false"/>
+            </column>
+            <column name="created_at" type="TIMESTAMP WITH TIME ZONE">
+                <constraints nullable="false"/>
+            </column>
+            <column name="updated_at" type="TIMESTAMP WITH TIME ZONE">
+                <constraints nullable="false"/>
+            </column>
+            <column name="created_by" type="UUID"/>
+            <column name="updated_by" type="UUID"/>
+            <column name="journal_entry_id" type="UUID">
+                <constraints nullable="false" foreignKeyName="fk_journal_entry_lines_entry"
+                             references="journal_entries(id)" deleteCascade="true"/>
+            </column>
+            <column name="line_number" type="INT">
+                <constraints nullable="false"/>
+            </column>
+            <column name="account_id" type="UUID">
+                <constraints nullable="false" foreignKeyName="fk_journal_entry_lines_account"
+                             references="accounts(id)"/>
+            </column>
+            <column name="debit_amount" type="DECIMAL(19,2)" defaultValueNumeric="0">
+                <constraints nullable="false"/>
+            </column>
+            <column name="credit_amount" type="DECIMAL(19,2)" defaultValueNumeric="0">
+                <constraints nullable="false"/>
+            </column>
+            <column name="memo" type="VARCHAR(1000)"/>
+            <column name="reconciled" type="BOOLEAN" defaultValueBoolean="false">
+                <constraints nullable="false"/>
+            </column>
+            <column name="reconciled_at" type="TIMESTAMP WITH TIME ZONE"/>
+        </createTable>
+
+        <sql>
+            ALTER TABLE journal_entry_lines
+                ADD CONSTRAINT chk_journal_entry_lines_amounts CHECK (
+                    debit_amount >= 0 AND credit_amount >= 0
+                    AND NOT (debit_amount > 0 AND credit_amount > 0)
+                    AND NOT (debit_amount = 0 AND credit_amount = 0)
+                );
+        </sql>
+
+        <createIndex indexName="idx_journal_entry_lines_entry" tableName="journal_entry_lines">
+            <column name="journal_entry_id"/>
+        </createIndex>
+        <createIndex indexName="idx_journal_entry_lines_account" tableName="journal_entry_lines">
+            <column name="account_id"/>
+        </createIndex>
+
+        <createTable tableName="journal_entry_line_tags">
+            <column name="journal_entry_line_id" type="UUID">
+                <constraints nullable="false" foreignKeyName="fk_journal_entry_line_tags_line"
+                             references="journal_entry_lines(id)"/>
+            </column>
+            <column name="tag" type="VARCHAR(64)">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+
+</databaseChangeLog>

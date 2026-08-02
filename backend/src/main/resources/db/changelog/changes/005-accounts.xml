@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+        https://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd">
+
+    <changeSet id="005-accounts" author="accounting-app">
+        <createTable tableName="accounts">
+            <column name="id" type="UUID">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="version" type="BIGINT" defaultValueNumeric="0">
+                <constraints nullable="false"/>
+            </column>
+            <column name="created_at" type="TIMESTAMP WITH TIME ZONE">
+                <constraints nullable="false"/>
+            </column>
+            <column name="updated_at" type="TIMESTAMP WITH TIME ZONE">
+                <constraints nullable="false"/>
+            </column>
+            <column name="created_by" type="UUID"/>
+            <column name="updated_by" type="UUID"/>
+            <column name="organization_id" type="UUID">
+                <constraints nullable="false" foreignKeyName="fk_accounts_organization"
+                             references="organizations(id)"/>
+            </column>
+            <column name="code" type="VARCHAR(32)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="name" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="description" type="VARCHAR(1000)"/>
+            <column name="account_type" type="VARCHAR(32)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="parent_id" type="UUID">
+                <constraints foreignKeyName="fk_accounts_parent" references="accounts(id)"/>
+            </column>
+            <column name="currency_code" type="VARCHAR(3)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="status" type="VARCHAR(16)" defaultValue="ACTIVE">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+
+        <addUniqueConstraint tableName="accounts" columnNames="organization_id, code"
+                              constraintName="uq_accounts_org_code"/>
+        <createIndex indexName="idx_accounts_org" tableName="accounts">
+            <column name="organization_id"/>
+        </createIndex>
+        <createIndex indexName="idx_accounts_parent" tableName="accounts">
+            <column name="parent_id"/>
+        </createIndex>
+
+        <createTable tableName="account_tags">
+            <column name="account_id" type="UUID">
+                <constraints nullable="false" foreignKeyName="fk_account_tags_account" references="accounts(id)"/>
+            </column>
+            <column name="tag" type="VARCHAR(64)">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+        <createIndex indexName="idx_account_tags_account" tableName="account_tags">
+            <column name="account_id"/>
+        </createIndex>
+    </changeSet>
+
+</databaseChangeLog>

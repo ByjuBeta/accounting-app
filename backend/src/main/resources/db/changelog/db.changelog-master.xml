@@ -9,5 +9,10 @@
     <include file="db/changelog/changes/002-users.xml" relativeToChangelogFile="false"/>
     <include file="db/changelog/changes/003-organization-members.xml" relativeToChangelogFile="false"/>
     <include file="db/changelog/changes/004-audit-logs.xml" relativeToChangelogFile="false"/>
+    <include file="db/changelog/changes/005-accounts.xml" relativeToChangelogFile="false"/>
+    <include file="db/changelog/changes/006-journal-entry-number-seq.xml" relativeToChangelogFile="false"/>
+    <include file="db/changelog/changes/007-journal-entries.xml" relativeToChangelogFile="false"/>
+    <include file="db/changelog/changes/008-journal-entry-lines.xml" relativeToChangelogFile="false"/>
+    <include file="db/changelog/changes/009-journal-balance-trigger.xml" relativeToChangelogFile="false"/>
 
 </databaseChangeLog>
