@@ -12,7 +12,7 @@ import { toast } from '@/store/useToastStore'
 import { ApiError } from '@/api/client'
 import { accountsApi } from '@/api/accounts'
 import { journalEntriesApi, TRANSACTION_TYPE_LABELS, type TransactionType } from '@/api/journalEntries'
-import { AccountPicker } from './AccountPicker'
+import { AccountPicker } from '@/components/domain/AccountPicker'
 
 const TRANSACTION_TYPES = Object.keys(TRANSACTION_TYPE_LABELS) as TransactionType[]
 
