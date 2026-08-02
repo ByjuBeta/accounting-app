@@ -1,9 +1,9 @@
 package com.accountingapp.ar;
 
-import com.accountingapp.ar.dto.AgingBucket;
 import com.accountingapp.ar.dto.ArAgingReport;
 import com.accountingapp.ar.dto.CustomerAging;
 import com.accountingapp.common.context.OrganizationContext;
+import com.accountingapp.common.dto.AgingBucket;
 import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;
 import java.util.LinkedHashMap;

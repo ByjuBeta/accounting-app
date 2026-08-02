@@ -1,6 +1,7 @@
 package com.accountingapp.ar.dto;
 
 import com.accountingapp.ar.CustomerStatus;
+import com.accountingapp.common.dto.AddressDto;
 import java.util.UUID;
 
 public record CustomerDto(

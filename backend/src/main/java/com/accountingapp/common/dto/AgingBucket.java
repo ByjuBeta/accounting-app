@@ -1,4 +1,4 @@
-package com.accountingapp.ar.dto;
+package com.accountingapp.common.dto;
 
 import java.math.BigDecimal;
 

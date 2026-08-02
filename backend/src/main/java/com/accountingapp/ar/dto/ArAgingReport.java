@@ -1,5 +1,6 @@
 package com.accountingapp.ar.dto;
 
+import com.accountingapp.common.dto.AgingBucket;
 import java.time.LocalDate;
 import java.util.List;
 

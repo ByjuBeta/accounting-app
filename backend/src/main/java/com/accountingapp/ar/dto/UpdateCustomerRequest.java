@@ -1,6 +1,7 @@
 package com.accountingapp.ar.dto;
 
 import com.accountingapp.ar.CustomerStatus;
+import com.accountingapp.common.dto.AddressDto;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.PositiveOrZero;

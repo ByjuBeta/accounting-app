@@ -18,5 +18,9 @@
     <include file="db/changelog/changes/011-ar-number-sequences.xml" relativeToChangelogFile="false"/>
     <include file="db/changelog/changes/012-invoices.xml" relativeToChangelogFile="false"/>
     <include file="db/changelog/changes/013-payments.xml" relativeToChangelogFile="false"/>
+    <include file="db/changelog/changes/014-vendors.xml" relativeToChangelogFile="false"/>
+    <include file="db/changelog/changes/015-ap-number-sequences.xml" relativeToChangelogFile="false"/>
+    <include file="db/changelog/changes/016-bills.xml" relativeToChangelogFile="false"/>
+    <include file="db/changelog/changes/017-bill-payments.xml" relativeToChangelogFile="false"/>
 
 </databaseChangeLog>

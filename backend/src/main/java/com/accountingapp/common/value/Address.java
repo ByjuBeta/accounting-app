@@ -1,4 +1,4 @@
-package com.accountingapp.ar;
+package com.accountingapp.common.value;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Embeddable;
