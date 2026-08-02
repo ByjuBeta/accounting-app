@@ -13,6 +13,11 @@ const STATUS_TONES: Record<string, 'slate' | 'blue' | 'green' | 'amber' | 'red' 
   VOID: 'slate',
   INACTIVE: 'slate',
   ARCHIVED: 'slate',
+  UNMATCHED: 'amber',
+  MATCHED: 'green',
+  IGNORED: 'slate',
+  IN_PROGRESS: 'amber',
+  COMPLETED: 'green',
 }
 
 export function statusTone(status: string) {
