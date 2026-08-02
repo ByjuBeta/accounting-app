@@ -24,8 +24,9 @@ class AccountHttpIntegrationTest extends AbstractHttpIntegrationTest {
 
     @Test
     void listingAccountsWithTagsThroughHttpDoesNotThrowLazyInitializationException() {
-        ResponseEntity<OrganizationDto> orgResponse = restTemplate.postForEntity(
-                baseUrl() + "/organizations",
+        registerAndLogin();
+        ResponseEntity<OrganizationDto> orgResponse = postAuthed(
+                "/organizations",
                 new CreateOrganizationRequest("Test Co", "Test Co LLC", "USD", "America/New_York"),
                 OrganizationDto.class);
         assertThat(orgResponse.getStatusCode()).isEqualTo(HttpStatus.CREATED);

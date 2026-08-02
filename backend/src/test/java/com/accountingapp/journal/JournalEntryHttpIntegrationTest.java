@@ -30,8 +30,9 @@ class JournalEntryHttpIntegrationTest extends AbstractHttpIntegrationTest {
 
     @Test
     void creatingAndPostingAnEntryThroughHttpDoesNotThrowLazyInitializationException() {
-        String organizationId = restTemplate.postForEntity(
-                        baseUrl() + "/organizations",
+        registerAndLogin();
+        String organizationId = postAuthed(
+                        "/organizations",
                         new CreateOrganizationRequest("Test Co", "Test Co LLC", "USD", "America/New_York"),
                         OrganizationDto.class)
                 .getBody().id().toString();

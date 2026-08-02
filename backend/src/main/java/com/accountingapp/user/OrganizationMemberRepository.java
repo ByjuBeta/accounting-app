@@ -10,4 +10,8 @@ public interface OrganizationMemberRepository extends JpaRepository<Organization
     List<OrganizationMember> findByUserIdAndActiveTrue(UUID userId);
 
     Optional<OrganizationMember> findByOrganizationIdAndUserId(UUID organizationId, UUID userId);
+
+    List<OrganizationMember> findByOrganizationIdAndActiveTrueOrderByCreatedAtAsc(UUID organizationId);
+
+    long countByOrganizationIdAndRoleAndActiveTrue(UUID organizationId, Role role);
 }

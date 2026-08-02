@@ -1,10 +1,15 @@
 package com.accountingapp.support;
 
+import com.accountingapp.auth.dto.AuthResponse;
+import com.accountingapp.auth.dto.RegisterRequest;
+import java.util.UUID;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.springframework.boot.test.web.server.LocalServerPort;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.MediaType;
 import org.springframework.test.context.DynamicPropertyRegistry;
 import org.springframework.test.context.DynamicPropertySource;
 import org.testcontainers.containers.PostgreSQLContainer;
@@ -38,20 +43,52 @@ public abstract class AbstractHttpIntegrationTest {
     @org.springframework.beans.factory.annotation.Autowired
     protected TestRestTemplate restTemplate;
 
+    protected String accessToken;
+
     protected String baseUrl() {
         return "http://localhost:" + port + "/api/v1";
     }
 
+    /** Registers a fresh user and stashes their access token for subsequent {@code withOrg}/{@code authed} calls. */
+    protected void registerAndLogin() {
+        String email = "test-" + UUID.randomUUID() + "@example.com";
+        AuthResponse response = restTemplate.postForEntity(
+                        baseUrl() + "/auth/register",
+                        new RegisterRequest(email, "Test-Password-123", "Test", "User"),
+                        AuthResponse.class)
+                .getBody();
+        accessToken = response.accessToken();
+    }
+
     protected HttpEntity<Void> withOrg(String organizationId) {
-        HttpHeaders headers = new HttpHeaders();
+        HttpHeaders headers = authHeaders();
         headers.set("X-Organization-Id", organizationId);
         return new HttpEntity<>(headers);
     }
 
     protected <T> HttpEntity<T> withOrg(String organizationId, T body) {
-        HttpHeaders headers = new HttpHeaders();
+        HttpHeaders headers = authHeaders();
         headers.set("X-Organization-Id", organizationId);
-        headers.setContentType(org.springframework.http.MediaType.APPLICATION_JSON);
+        headers.setContentType(MediaType.APPLICATION_JSON);
         return new HttpEntity<>(body, headers);
+    }
+
+    /** For endpoints that need authentication but no organization context yet (e.g. creating an org). */
+    protected <T> HttpEntity<T> authed(T body) {
+        HttpHeaders headers = authHeaders();
+        headers.setContentType(MediaType.APPLICATION_JSON);
+        return new HttpEntity<>(body, headers);
+    }
+
+    protected <T> org.springframework.http.ResponseEntity<T> postAuthed(String path, Object body, Class<T> responseType) {
+        return restTemplate.exchange(baseUrl() + path, HttpMethod.POST, authed(body), responseType);
+    }
+
+    private HttpHeaders authHeaders() {
+        HttpHeaders headers = new HttpHeaders();
+        if (accessToken != null) {
+            headers.setBearerAuth(accessToken);
+        }
+        return headers;
     }
 }

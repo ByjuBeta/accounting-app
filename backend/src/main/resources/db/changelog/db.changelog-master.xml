@@ -23,5 +23,6 @@
     <include file="db/changelog/changes/016-bills.xml" relativeToChangelogFile="false"/>
     <include file="db/changelog/changes/017-bill-payments.xml" relativeToChangelogFile="false"/>
     <include file="db/changelog/changes/018-banking.xml" relativeToChangelogFile="false"/>
+    <include file="db/changelog/changes/019-refresh-tokens.xml" relativeToChangelogFile="false"/>
 
 </databaseChangeLog>

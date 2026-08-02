@@ -3,12 +3,9 @@ package com.accountingapp.common.context;
 import java.util.UUID;
 
 /**
- * The organization (tenant) the current request is operating against.
- * Populated per-request by {@link OrganizationContextFilter}. Until the JWT
- * auth chain lands (see the auth/settings block), the filter trusts an
- * {@code X-Organization-Id} header; afterward it will be derived from the
- * authenticated user's active organization membership instead — callers of
- * {@link #getRequired()} don't need to change either way.
+ * The organization (tenant) the current request is operating against. Populated per-request by
+ * {@link OrganizationContextFilter} from the {@code X-Organization-Id} header, after verifying (for
+ * authenticated requests) that the caller is an active member of that organization.
  */
 public final class OrganizationContext {
 
