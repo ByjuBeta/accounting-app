@@ -1,5 +1,5 @@
 import { create } from 'zustand'
-import { persist } from 'zustand/middleware'
+import { createJSONStorage, persist } from 'zustand/middleware'
 import { useOrgStore } from './useOrgStore'
 import type { MembershipDto, UserDto } from '@/api/auth'
 
@@ -44,6 +44,9 @@ export const useAuthStore = create<AuthState>()(
       },
       clear: () => set({ accessToken: null, refreshToken: null, user: null, memberships: [] }),
     }),
-    { name: 'accounting-app.auth' },
+    {
+      name: 'accounting-app.auth',
+      storage: createJSONStorage(() => window.localStorage),
+    },
   ),
 )

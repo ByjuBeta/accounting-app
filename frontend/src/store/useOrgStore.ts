@@ -1,5 +1,5 @@
 import { create } from 'zustand'
-import { persist } from 'zustand/middleware'
+import { createJSONStorage, persist } from 'zustand/middleware'
 
 interface OrgState {
   currentOrganizationId: string | null
@@ -12,6 +12,9 @@ export const useOrgStore = create<OrgState>()(
       currentOrganizationId: null,
       setCurrentOrganizationId: (id) => set({ currentOrganizationId: id }),
     }),
-    { name: 'accounting-app.current-organization' },
+    {
+      name: 'accounting-app.current-organization',
+      storage: createJSONStorage(() => window.localStorage),
+    },
   ),
 )

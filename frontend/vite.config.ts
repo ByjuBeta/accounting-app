@@ -21,6 +21,13 @@ export default defineConfig({
   },
   test: {
     environment: 'jsdom',
+    // jsdom only implements localStorage for a real http(s) origin — without this,
+    // window.localStorage is undefined, which breaks any zustand persist store under test.
+    environmentOptions: {
+      jsdom: {
+        url: 'http://localhost:3000',
+      },
+    },
     globals: true,
     setupFiles: ['./src/test/setup.ts'],
   },
